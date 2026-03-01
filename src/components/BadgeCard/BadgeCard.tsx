@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import confetti from 'canvas-confetti'
 import { TrainingBadge } from '../../types'
 import styles from './BadgeCard.module.css'
@@ -41,6 +42,7 @@ export default function BadgeCard({
   onUnachieve,
 }: Props) {
   const isDone = achieved || locked
+  const [tipOpen, setTipOpen] = useState(false)
 
   const handleClick = () => {
     if (locked) return
@@ -52,6 +54,11 @@ export default function BadgeCard({
         onUnachieve()
       }
     }
+  }
+
+  const handleTipToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setTipOpen((prev) => !prev)
   }
 
   return (
@@ -77,6 +84,29 @@ export default function BadgeCard({
 
       {!isDone && (
         <span className={styles.desc}>{badge.description}</span>
+      )}
+
+      {!isDone && badge.tip && (
+        <span
+          className={styles.tipToggle}
+          role="button"
+          tabIndex={0}
+          aria-label={tipOpen ? 'Trainingstipp ausblenden' : 'Trainingstipp anzeigen'}
+          aria-expanded={tipOpen}
+          onClick={handleTipToggle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation()
+              setTipOpen((prev) => !prev)
+            }
+          }}
+        >
+          💡
+        </span>
+      )}
+
+      {!isDone && tipOpen && badge.tip && (
+        <span className={styles.tip}>{badge.tip}</span>
       )}
     </button>
   )
