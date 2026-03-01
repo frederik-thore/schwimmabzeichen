@@ -30,6 +30,13 @@
   color: #0369a1;
 }
 
+.mascot {
+  width: 140px;
+  height: 105px;
+  margin: 0 auto 8px;
+  display: block;
+}
+
 .childGrid {
   display: flex;
   flex-direction: column;

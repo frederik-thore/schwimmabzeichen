@@ -1,0 +1,109 @@
+/* ---- Wrapper ---- */
+.wrapper {
+  display: inline-block;
+  user-select: none;
+  /* GPU-compositing hint for smooth animation */
+  will-change: transform;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---- Idle: gentle bobbing swim ---- */
+.idle {
+  animation: swim 3.6s ease-in-out infinite;
+}
+
+@keyframes swim {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+  70% {
+    transform: translateY(4px) rotate(-1.5deg);
+  }
+}
+
+/* ---- Celebrate: energetic jump ---- */
+.celebrate {
+  animation: jump 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 3;
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  40% {
+    transform: translateY(-28px) rotate(-18deg) scale(1.12);
+  }
+  70% {
+    transform: translateY(-14px) rotate(8deg) scale(1.06);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+/* ---- Tail wag (child of .idle/.celebrate) ---- */
+.tail {
+  transform-origin: 20px 48px;
+  animation: wagTail 1.2s ease-in-out infinite;
+}
+
+@keyframes wagTail {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+}
+
+/* ---- Dorsal fin bob ---- */
+.dorsal {
+  transform-origin: 64px 28px;
+  animation: dorsalBob 2.4s ease-in-out infinite;
+}
+
+@keyframes dorsalBob {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.85);
+  }
+}
+
+/* ---- Sparkles: hidden during idle, burst during celebrate ---- */
+.sparkles {
+  opacity: 0;
+  transform-origin: center;
+}
+
+.celebrate .sparkles {
+  opacity: 1;
+  animation: sparklePop 0.6s ease-out 3;
+}
+
+@keyframes sparklePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}

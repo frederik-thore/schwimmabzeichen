@@ -105,6 +105,16 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.mascot {
+  width: 120px;
+  height: 90px;
+  margin: 8px auto 4px;
+  display: block;
+  /* keep the mascot on top of header background without overflow clipping it */
+  position: relative;
+  z-index: 1;
+}
+
 .levels {
   padding: 24px 16px 0;
   max-width: 640px;
