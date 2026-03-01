@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { CHILDREN } from '../../data/badges'
 import { useProgress } from '../../hooks/useProgress'
+import Mascot from '../../components/Mascot/Mascot'
 import styles from './Home.module.css'
 
 function ChildCard({ child }: { child: (typeof CHILDREN)[0] }) {
@@ -54,6 +55,7 @@ export default function Home() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.waves}>🌊</div>
+        <Mascot className={styles.mascot} />
         <h1 className={styles.title}>Schwimm-Tracker</h1>
         <p className={styles.subtitle}>Wer möchte heute trainieren?</p>
       </div>

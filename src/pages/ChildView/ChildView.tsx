@@ -1,7 +1,9 @@
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CHILDREN } from '../../data/badges'
 import { useProgress } from '../../hooks/useProgress'
 import AwardLevelCard from '../../components/AwardLevelCard/AwardLevelCard'
+import Mascot, { MascotState } from '../../components/Mascot/Mascot'
 import styles from './ChildView.module.css'
 
 export default function ChildView() {
@@ -9,6 +11,31 @@ export default function ChildView() {
   const navigate = useNavigate()
 
   const child = CHILDREN.find((c) => c.id === childId)
+
+  const { isBadgeAchieved, getBadgeDate, achieveBadge, unachieveBadge } =
+    useProgress(child?.id ?? '')
+
+  const [mascotState, setMascotState] = useState<MascotState>('idle')
+  const celebrateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear any pending timer on unmount
+  useEffect(() => () => {
+    if (celebrateTimerRef.current !== null) clearTimeout(celebrateTimerRef.current)
+  }, [])
+
+  const handleAchieveBadge = useCallback(
+    (badgeId: string) => {
+      achieveBadge(badgeId)
+      setMascotState('celebrate')
+      // 3 jump iterations × 0.6 s each = 1.8 s total; reset with a small buffer
+      if (celebrateTimerRef.current !== null) clearTimeout(celebrateTimerRef.current)
+      celebrateTimerRef.current = setTimeout(() => {
+        setMascotState('idle')
+        celebrateTimerRef.current = null
+      }, 2000)
+    },
+    [achieveBadge],
+  )
 
   if (!child) {
     return (
@@ -18,9 +45,6 @@ export default function ChildView() {
       </div>
     )
   }
-
-  const { isBadgeAchieved, getBadgeDate, achieveBadge, unachieveBadge } =
-    useProgress(child.id)
 
   const earnableBadges = child.levels
     .filter((l) => !l.alreadyAchieved)
@@ -49,6 +73,8 @@ export default function ChildView() {
 
         <span className={styles.avatar}>{child.emoji}</span>
         <h1 className={styles.name}>{child.name}</h1>
+
+        <Mascot state={mascotState} className={styles.mascot} />
 
         <div className={styles.stars}>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -79,7 +105,7 @@ export default function ChildView() {
             level={level}
             isBadgeAchieved={isBadgeAchieved}
             getBadgeDate={getBadgeDate}
-            onAchieve={achieveBadge}
+            onAchieve={handleAchieveBadge}
             onUnachieve={unachieveBadge}
           />
         ))}
