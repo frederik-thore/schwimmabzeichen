@@ -3,6 +3,7 @@ export interface TrainingBadge {
   emoji: string
   name: string
   description: string
+  tip?: string
 }
 
 export interface AwardLevel {
