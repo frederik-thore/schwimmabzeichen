@@ -87,6 +87,39 @@
   padding: 16px;
 }
 
+.datePicker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.dateLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dateInput {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: #fff;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.dateInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.achievedDate {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

@@ -8,14 +8,25 @@ interface Props {
   level: AwardLevel
   isBadgeAchieved: (id: string) => boolean
   getBadgeDate: (id: string) => Date | null
+  getLevelDate: (levelId: string) => string | null
+  setLevelDate: (levelId: string, yearMonth: string) => void
   onAchieve: (id: string) => void
   onUnachieve: (id: string) => void
+}
+
+function formatYearMonth(yearMonth: string): string {
+  const match = yearMonth.match(/^(\d{4})-(\d{2})$/)
+  if (!match) return yearMonth
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, 1)
+  return date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
 }
 
 export default function AwardLevelCard({
   level,
   isBadgeAchieved,
   getBadgeDate,
+  getLevelDate,
+  setLevelDate,
   onAchieve,
   onUnachieve,
 }: Props) {
@@ -52,7 +63,15 @@ export default function AwardLevelCard({
             {level.name}
           </span>
           {level.alreadyAchieved ? (
-            <span className={styles.alreadyTag}>🏆 Bereits erreicht!</span>
+            <span className={styles.alreadyTag}>
+              🏆 Bereits erreicht!
+              {getLevelDate(level.id) && (
+                <span className={styles.achievedDate}>
+                  {' · Erreicht im '}
+                  {formatYearMonth(getLevelDate(level.id)!)}
+                </span>
+              )}
+            </span>
           ) : (
             <span className={styles.progress} style={{ color: level.color }}>
               {trainingAchieved}/{total} Aufgaben
@@ -75,6 +94,20 @@ export default function AwardLevelCard({
       {/* Badge-Grid */}
       {expanded && (
         <div className={styles.body}>
+          {level.alreadyAchieved && (
+            <div className={styles.datePicker}>
+              <label className={styles.dateLabel} style={{ color: level.color }}>
+                📅 Wann erreicht? (optional)
+              </label>
+              <input
+                type="month"
+                className={styles.dateInput}
+                style={{ borderColor: level.color }}
+                value={getLevelDate(level.id) ?? ''}
+                onChange={(e) => setLevelDate(level.id, e.target.value)}
+              />
+            </div>
+          )}
           <div className={styles.grid}>
             {level.badges.map((badge) => (
               <BadgeCard
