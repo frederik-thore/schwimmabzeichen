@@ -1,12 +1,22 @@
 import { useState, useCallback } from 'react'
-import { ChildProgress } from '../types'
+import { ChildProgress, LevelAchievementDates } from '../types'
 
 const storageKey = (childId: string) => `schwimmabzeichen-${childId}`
+const levelDatesKey = (childId: string) => `schwimmabzeichen-${childId}-leveldates`
 
 export function useProgress(childId: string) {
   const [progress, setProgress] = useState<ChildProgress>(() => {
     try {
       const raw = localStorage.getItem(storageKey(childId))
+      return raw ? JSON.parse(raw) : {}
+    } catch {
+      return {}
+    }
+  })
+
+  const [levelDates, setLevelDatesState] = useState<LevelAchievementDates>(() => {
+    try {
+      const raw = localStorage.getItem(levelDatesKey(childId))
       return raw ? JSON.parse(raw) : {}
     } catch {
       return {}
@@ -47,5 +57,26 @@ export function useProgress(childId: string) {
     [progress],
   )
 
-  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate }
+  const setLevelDate = useCallback(
+    (levelId: string, yearMonth: string) => {
+      setLevelDatesState((prev) => {
+        const updated = { ...prev }
+        if (yearMonth) {
+          updated[levelId] = yearMonth
+        } else {
+          delete updated[levelId]
+        }
+        localStorage.setItem(levelDatesKey(childId), JSON.stringify(updated))
+        return updated
+      })
+    },
+    [childId],
+  )
+
+  const getLevelDate = useCallback(
+    (levelId: string): string | null => levelDates[levelId] ?? null,
+    [levelDates],
+  )
+
+  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate, setLevelDate, getLevelDate }
 }

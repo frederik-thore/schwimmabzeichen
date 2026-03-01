@@ -26,3 +26,4 @@ export interface Child {
 }
 
 export type ChildProgress = Record<string, string> // badgeId → ISO-Datumstring
+export type LevelAchievementDates = Record<string, string> // levelId → "YYYY-MM"
