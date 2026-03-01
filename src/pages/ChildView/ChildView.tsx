@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { CHILDREN } from '../../data/badges'
+import { useChildren } from '../../hooks/useChildren'
 import { useProgress } from '../../hooks/useProgress'
 import AwardLevelCard from '../../components/AwardLevelCard/AwardLevelCard'
 import styles from './ChildView.module.css'
@@ -7,8 +7,9 @@ import styles from './ChildView.module.css'
 export default function ChildView() {
   const { childId } = useParams<{ childId: string }>()
   const navigate = useNavigate()
+  const { children } = useChildren()
 
-  const child = CHILDREN.find((c) => c.id === childId)
+  const child = children.find((c) => c.id === childId)
 
   if (!child) {
     return (

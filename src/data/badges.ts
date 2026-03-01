@@ -186,6 +186,10 @@ const gold: AwardLevel = {
   ],
 }
 
+// ─── Basis-Level (Standard-Fallback) ──────────────────────────────────────
+
+export const BASE_LEVELS = [seepferdchen, bronze, silber, gold]
+
 // ─── Kinderprofile ─────────────────────────────────────────────────────────
 
 export const CHILDREN: Child[] = [
