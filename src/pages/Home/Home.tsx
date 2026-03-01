@@ -1,9 +1,20 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CHILDREN } from '../../data/badges'
+import { Child } from '../../types'
+import { useChildren } from '../../hooks/useChildren'
 import { useProgress } from '../../hooks/useProgress'
+import ChildFormModal from '../../components/ChildFormModal/ChildFormModal'
 import styles from './Home.module.css'
 
-function ChildCard({ child }: { child: (typeof CHILDREN)[0] }) {
+function ChildCard({
+  child,
+  onEdit,
+  onDelete,
+}: {
+  child: Child
+  onEdit: (child: Child) => void
+  onDelete: (child: Child) => void
+}) {
   const navigate = useNavigate()
   const { isBadgeAchieved } = useProgress(child.id)
 
@@ -17,39 +28,101 @@ function ChildCard({ child }: { child: (typeof CHILDREN)[0] }) {
   const currentLevel = child.levels.find((l) => !l.alreadyAchieved)
 
   return (
-    <button
-      className={styles.childCard}
-      style={{ background: `linear-gradient(145deg, ${child.primaryColor}, ${child.secondaryColor === child.primaryColor ? child.primaryColor + 'aa' : child.secondaryColor})` }}
-      onClick={() => navigate(`/kind/${child.id}`)}
-      aria-label={`${child.name} auswählen`}
-    >
-      <span className={styles.childEmoji}>{child.emoji}</span>
-      <span className={styles.childName}>{child.name}</span>
-      <span className={styles.childAge}>{child.age} Jahre</span>
+    <div className={styles.cardWrapper}>
+      <button
+        className={styles.childCard}
+        style={{
+          background: `linear-gradient(145deg, ${child.primaryColor}, ${
+            child.secondaryColor === child.primaryColor
+              ? child.primaryColor + 'aa'
+              : child.secondaryColor
+          })`,
+        }}
+        onClick={() => navigate(`/kind/${child.id}`)}
+        aria-label={`${child.name} auswählen`}
+      >
+        <span className={styles.childEmoji}>{child.emoji}</span>
+        <span className={styles.childName}>{child.name}</span>
+        <span className={styles.childAge}>{child.age} Jahre</span>
 
-      {currentLevel && (
-        <div className={styles.goalBadge}>
-          <span>{currentLevel.emoji}</span>
-          <span>Ziel: {currentLevel.name}</span>
-        </div>
-      )}
+        {currentLevel && (
+          <div className={styles.goalBadge}>
+            <span>{currentLevel.emoji}</span>
+            <span>Ziel: {currentLevel.name}</span>
+          </div>
+        )}
 
-      <div className={styles.progressRow}>
-        <div className={styles.progressBarSmall}>
-          <div
-            className={styles.progressFillSmall}
-            style={{ width: totalCount > 0 ? `${(achievedCount / totalCount) * 100}%` : '0%' }}
-          />
+        <div className={styles.progressRow}>
+          <div className={styles.progressBarSmall}>
+            <div
+              className={styles.progressFillSmall}
+              style={{ width: totalCount > 0 ? `${(achievedCount / totalCount) * 100}%` : '0%' }}
+            />
+          </div>
+          <span className={styles.progressText}>
+            {achievedCount}/{totalCount}
+          </span>
         </div>
-        <span className={styles.progressText}>
-          {achievedCount}/{totalCount}
-        </span>
+      </button>
+
+      <div className={styles.cardActions}>
+        <button
+          className={styles.cardActionBtn}
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit(child)
+          }}
+          aria-label={`${child.name} bearbeiten`}
+          title="Bearbeiten"
+        >
+          ✏️
+        </button>
+        <button
+          className={styles.cardActionBtn}
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete(child)
+          }}
+          aria-label={`${child.name} löschen`}
+          title="Löschen"
+        >
+          🗑️
+        </button>
       </div>
-    </button>
+    </div>
   )
 }
 
 export default function Home() {
+  const { children, addChild, updateChild, deleteChild } = useChildren()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editingChild, setEditingChild] = useState<Child | undefined>(undefined)
+
+  function handleOpenAdd() {
+    setEditingChild(undefined)
+    setModalOpen(true)
+  }
+
+  function handleOpenEdit(child: Child) {
+    setEditingChild(child)
+    setModalOpen(true)
+  }
+
+  function handleDelete(child: Child) {
+    if (window.confirm(`„${child.name}" wirklich löschen?`)) {
+      deleteChild(child.id)
+    }
+  }
+
+  function handleSave(child: Child) {
+    if (editingChild) {
+      updateChild(child)
+    } else {
+      addChild(child)
+    }
+    setModalOpen(false)
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -59,10 +132,28 @@ export default function Home() {
       </div>
 
       <div className={styles.childGrid}>
-        {CHILDREN.map((child) => (
-          <ChildCard key={child.id} child={child} />
+        {children.map((child) => (
+          <ChildCard
+            key={child.id}
+            child={child}
+            onEdit={handleOpenEdit}
+            onDelete={handleDelete}
+          />
         ))}
+
+        <button className={styles.addBtn} onClick={handleOpenAdd} aria-label="Kind hinzufügen">
+          <span className={styles.addBtnIcon}>＋</span>
+          <span>Kind hinzufügen</span>
+        </button>
       </div>
+
+      {modalOpen && (
+        <ChildFormModal
+          child={editingChild}
+          onSave={handleSave}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   )
 }
