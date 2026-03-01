@@ -87,6 +87,41 @@
   padding: 16px;
 }
 
+.dateSection {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1.5px dashed #cbd5e1;
+}
+
+.dateLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+}
+
+.dateInput {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #1e293b;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: #94a3b8;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

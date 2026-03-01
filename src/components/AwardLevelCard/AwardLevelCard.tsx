@@ -10,6 +10,19 @@ interface Props {
   getBadgeDate: (id: string) => Date | null
   onAchieve: (id: string) => void
   onUnachieve: (id: string) => void
+  getLevelDate: (levelId: string) => string | null
+  onSetLevelDate: (levelId: string, value: string | null) => void
+}
+
+function formatMonthYear(monthYear: string): string {
+  const parts = monthYear.split('-')
+  if (parts.length !== 2) return monthYear
+  const [year, month] = parts.map(Number)
+  if (isNaN(year) || isNaN(month)) return monthYear
+  return new Date(year, month - 1, 1).toLocaleDateString('de-DE', {
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 export default function AwardLevelCard({
@@ -18,6 +31,8 @@ export default function AwardLevelCard({
   getBadgeDate,
   onAchieve,
   onUnachieve,
+  getLevelDate,
+  onSetLevelDate,
 }: Props) {
   const [expanded, setExpanded] = useState(!level.alreadyAchieved)
 
@@ -30,6 +45,9 @@ export default function AwardLevelCard({
   const readyForExam = !level.alreadyAchieved && allDone
 
   const progressPercent = Math.round((trainingAchieved / total) * 100)
+
+  const levelDateValue = level.alreadyAchieved ? getLevelDate(level.id) : null
+  const formattedDate = levelDateValue ? formatMonthYear(levelDateValue) : null
 
   return (
     <div
@@ -52,7 +70,9 @@ export default function AwardLevelCard({
             {level.name}
           </span>
           {level.alreadyAchieved ? (
-            <span className={styles.alreadyTag}>🏆 Bereits erreicht!</span>
+            <span className={styles.alreadyTag}>
+              {formattedDate ? `🏆 Erreicht im ${formattedDate}` : '🏆 Bereits erreicht!'}
+            </span>
           ) : (
             <span className={styles.progress} style={{ color: level.color }}>
               {trainingAchieved}/{total} Aufgaben
@@ -75,6 +95,22 @@ export default function AwardLevelCard({
       {/* Badge-Grid */}
       {expanded && (
         <div className={styles.body}>
+          {level.alreadyAchieved && (
+            <div className={styles.dateSection}>
+              <label className={styles.dateLabel}>
+                📅 Monat & Jahr
+                <input
+                  type="month"
+                  className={styles.dateInput}
+                  value={levelDateValue ?? ''}
+                  onChange={(e) =>
+                    onSetLevelDate(level.id, e.target.value || null)
+                  }
+                />
+              </label>
+            </div>
+          )}
+
           <div className={styles.grid}>
             {level.badges.map((badge) => (
               <BadgeCard

@@ -19,7 +19,7 @@ export default function ChildView() {
     )
   }
 
-  const { isBadgeAchieved, getBadgeDate, achieveBadge, unachieveBadge } =
+  const { isBadgeAchieved, getBadgeDate, achieveBadge, unachieveBadge, getLevelDate, setLevelDate } =
     useProgress(child.id)
 
   const earnableBadges = child.levels
@@ -81,6 +81,8 @@ export default function ChildView() {
             getBadgeDate={getBadgeDate}
             onAchieve={achieveBadge}
             onUnachieve={unachieveBadge}
+            getLevelDate={getLevelDate}
+            onSetLevelDate={setLevelDate}
           />
         ))}
       </div>
