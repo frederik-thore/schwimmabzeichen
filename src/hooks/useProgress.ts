@@ -47,5 +47,27 @@ export function useProgress(childId: string) {
     [progress],
   )
 
-  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate }
+  const getLevelDate = useCallback(
+    (levelId: string): string | null => progress[`__level__${levelId}`] ?? null,
+    [progress],
+  )
+
+  const setLevelDate = useCallback(
+    (levelId: string, value: string | null) => {
+      setProgress((prev) => {
+        const updated = { ...prev }
+        const key = `__level__${levelId}`
+        if (value) {
+          updated[key] = value
+        } else {
+          delete updated[key]
+        }
+        localStorage.setItem(storageKey(childId), JSON.stringify(updated))
+        return updated
+      })
+    },
+    [childId],
+  )
+
+  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate, getLevelDate, setLevelDate }
 }
