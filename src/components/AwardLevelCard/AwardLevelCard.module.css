@@ -1,0 +1,100 @@
+.card {
+  background: #fff;
+  border-radius: 24px;
+  border: 3px solid;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.achieved {
+  opacity: 0.85;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 0;
+  transition: filter 0.15s;
+}
+
+.header:hover {
+  filter: brightness(0.97);
+}
+
+.levelEmoji {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.headerText {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.levelName {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.alreadyTag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.progress {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.chevron {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+/* Fortschrittsbalken */
+.progressBar {
+  height: 10px;
+  background: #f1f5f9;
+  margin: 0 20px 0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.body {
+  padding: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

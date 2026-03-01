@@ -1,0 +1,34 @@
+/* Kindgerechte globale Basis-Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: 'Nunito', 'Fredoka One', 'Comic Neue', Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Erzwingt immer hellen Modus – App soll für Kinder immer bunt/hell sein */
+  color-scheme: light;
+}
+
+body {
+  background: #f0f9ff;
+  color: #1e293b;
+  min-height: 100dvh;
+  /* Verhindert unerwünschtes Zoomen auf iOS beim Tap */
+  touch-action: manipulation;
+}
+
+/* Bessere Tap-Targets auf Touch-Geräten */
+button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}

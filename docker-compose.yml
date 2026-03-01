@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Lokaler Code wird live in den Container gemountet → Hot Reload
+      - .:/app
+      # node_modules des Containers nicht durch den Host überschreiben
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development

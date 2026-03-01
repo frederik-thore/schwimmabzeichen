@@ -1,0 +1,8 @@
+FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5173
+# --host macht den Dev-Server im Container von außen erreichbar
+CMD ["npm", "run", "dev", "--", "--host"]
