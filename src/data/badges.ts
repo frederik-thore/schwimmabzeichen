@@ -217,4 +217,18 @@ export const CHILDREN: Child[] = [
       { ...gold },
     ],
   },
+  {
+    id: 'ben',
+    name: 'Ben',
+    age: 9,
+    emoji: '🐋',
+    primaryColor: '#0284c7',
+    secondaryColor: '#e0f2fe',
+    levels: [
+      { ...seepferdchen, alreadyAchieved: true },
+      { ...bronze, alreadyAchieved: true },
+      { ...silber, alreadyAchieved: true },
+      { ...gold },
+    ],
+  },
 ]
