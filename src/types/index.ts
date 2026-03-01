@@ -25,4 +25,14 @@ export interface Child {
   levels: AwardLevel[]
 }
 
+export interface ChildProfile {
+  id: string
+  name: string
+  age: number
+  emoji: string
+  primaryColor: string
+  secondaryColor: string
+  achievedLevelIds: string[]
+}
+
 export type ChildProgress = Record<string, string> // badgeId → ISO-Datumstring

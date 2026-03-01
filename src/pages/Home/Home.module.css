@@ -39,6 +39,19 @@
   margin: 0 auto;
 }
 
+.childCardWrapper {
+  position: relative;
+  border-radius: 28px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+}
+
+.childCardWrapper:hover,
+.childCardWrapper:focus-within {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+}
+
 .childCard {
   border: none;
   border-radius: 28px;
@@ -48,22 +61,95 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+  background: transparent;
   font-family: inherit;
   text-align: center;
+  width: 100%;
+  padding-top: 44px;
 }
 
-.childCard:hover,
 .childCard:focus-visible {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
-  outline: none;
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+  outline-offset: -3px;
+  border-radius: 28px;
 }
 
-.childCard:active {
-  transform: scale(0.97);
+.cardActions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
+
+.confirmText {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.actionBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+  padding: 0;
+}
+
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(1.1);
+}
+
+.actionBtnConfirm {
+  background: rgba(22, 163, 74, 0.6);
+  color: #fff;
+}
+
+.actionBtnConfirm:hover {
+  background: rgba(22, 163, 74, 0.85);
+}
+
+.addBtn {
+  border: 3px dashed rgba(3, 105, 161, 0.4);
+  border-radius: 28px;
+  padding: 22px 24px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+}
+
+.addBtn:hover {
+  background: rgba(224, 242, 254, 0.9);
+  border-color: #0369a1;
+  transform: translateY(-2px);
+}
+
+.addIcon {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
 
 .childEmoji {
   font-size: 5rem;

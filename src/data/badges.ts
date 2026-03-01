@@ -188,6 +188,8 @@ const gold: AwardLevel = {
 
 // ─── Kinderprofile ─────────────────────────────────────────────────────────
 
+export const LEVELS = [seepferdchen, bronze, silber, gold]
+
 export const CHILDREN: Child[] = [
   {
     id: 'freja',
