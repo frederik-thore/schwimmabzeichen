@@ -43,16 +43,18 @@ export default function BadgeCard({
 }: Props) {
   const isDone = achieved || locked
   const [tipOpen, setTipOpen] = useState(false)
+  const [confirmUnachieve, setConfirmUnachieve] = useState(false)
 
   const handleClick = () => {
     if (locked) return
     if (!achieved) {
       onAchieve()
       fireworks(levelColor)
+      setConfirmUnachieve(false)
+    } else if (!confirmUnachieve) {
+      setConfirmUnachieve(true)
     } else {
-      if (window.confirm(`"${badge.name}" wieder als offen markieren?`)) {
-        onUnachieve()
-      }
+      setConfirmUnachieve(false)
     }
   }
 
@@ -75,7 +77,33 @@ export default function BadgeCard({
     >
       <span className={styles.emoji}>{badge.emoji}</span>
 
-      {isDone && <span className={styles.checkmark}>✅</span>}
+      {achieved && confirmUnachieve ? (
+        <span className={styles.confirmUnachieve} onClick={(e) => e.stopPropagation()}>
+          <span className={styles.confirmText}>Abwählen?</span>
+          <span className={styles.confirmActions}>
+            <span
+              className={styles.confirmYes}
+              role="button"
+              tabIndex={0}
+              aria-label="Bestätigen"
+              onClick={(e) => { e.stopPropagation(); onUnachieve(); setConfirmUnachieve(false) }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onUnachieve(); setConfirmUnachieve(false) } }}
+            >✓</span>
+            <span
+              className={styles.confirmNo}
+              role="button"
+              tabIndex={0}
+              aria-label="Abbrechen"
+              onClick={(e) => { e.stopPropagation(); setConfirmUnachieve(false) }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); setConfirmUnachieve(false) } }}
+            >✕</span>
+          </span>
+        </span>
+      ) : (
+        <>
+          {isDone && <span className={styles.checkmark}>✅</span>}
+        </>
+      )}
 
       <span className={styles.name}>{badge.name}</span>
 
