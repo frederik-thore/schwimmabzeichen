@@ -3,6 +3,7 @@ export interface TrainingBadge {
   emoji: string
   name: string
   description: string
+  tip?: string
 }
 
 export interface AwardLevel {
@@ -26,3 +27,15 @@ export interface Child {
 }
 
 export type ChildProgress = Record<string, string> // badgeId → ISO-Datumstring
+
+export type LevelAchievementDates = Record<string, string> // levelId → "YYYY-MM"
+
+export interface ChildProfile {
+  id: string
+  name: string
+  age: number
+  emoji: string
+  primaryColor: string
+  secondaryColor: string
+  achievedLevelIds: string[]
+}

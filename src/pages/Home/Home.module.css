@@ -131,3 +131,96 @@
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-8px); }
 }
+
+.mascot {
+  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 12px rgba(56, 189, 248, 0.5));
+}
+
+.childCardWrapper {
+  position: relative;
+}
+
+.actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.childCardWrapper:hover .actions,
+.childCardWrapper:focus-within .actions {
+  opacity: 1;
+}
+
+.editBtn,
+.deleteBtn,
+.confirmDeleteBtn,
+.cancelDeleteBtn {
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.editBtn:hover,
+.deleteBtn:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.confirmDeleteBtn {
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.confirmDeleteBtn:hover {
+  background: #bbf7d0;
+}
+
+.cancelDeleteBtn {
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.cancelDeleteBtn:hover {
+  background: #fecaca;
+}
+
+.addBtn {
+  border: 3px dashed #7dd3fc;
+  border-radius: 28px;
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0284c7;
+  transition: background 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.addBtn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #0284c7;
+  transform: translateY(-2px);
+}
+
+.addBtn span:first-child {
+  font-size: 2rem;
+}

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { ChildProgress } from '../types'
 
 const storageKey = (childId: string) => `schwimmabzeichen-${childId}`
+const LEVEL_PREFIX = '__level__'
 
 export function useProgress(childId: string) {
   const [progress, setProgress] = useState<ChildProgress>(() => {
@@ -47,5 +48,27 @@ export function useProgress(childId: string) {
     [progress],
   )
 
-  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate }
+  const getLevelDate = useCallback(
+    (levelId: string): string | null => progress[`${LEVEL_PREFIX}${levelId}`] ?? null,
+    [progress],
+  )
+
+  const setLevelDate = useCallback(
+    (levelId: string, value: string | null) => {
+      const key = `${LEVEL_PREFIX}${levelId}`
+      setProgress((prev) => {
+        const updated = { ...prev }
+        if (value) {
+          updated[key] = value
+        } else {
+          delete updated[key]
+        }
+        localStorage.setItem(storageKey(childId), JSON.stringify(updated))
+        return updated
+      })
+    },
+    [childId],
+  )
+
+  return { progress, achieveBadge, unachieveBadge, isBadgeAchieved, getBadgeDate, getLevelDate, setLevelDate }
 }

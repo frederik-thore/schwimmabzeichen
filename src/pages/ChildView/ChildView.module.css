@@ -110,3 +110,9 @@
   max-width: 640px;
   margin: 0 auto;
 }
+
+.mascot {
+  display: block;
+  margin: 0 auto 4px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
