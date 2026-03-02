@@ -5,9 +5,22 @@ import { useAuth } from '../context/AuthContext'
 import { useChildren } from './useChildren'
 import { useFirestoreChildren } from './useFirestoreChildren'
 import { ChildProfile } from '../types'
+import { CHILDREN } from '../data/badges'
 
 const PROFILES_KEY = 'schwimmabzeichen-children-profiles'
 const PROGRESS_KEY = (childId: string) => `schwimmabzeichen-${childId}`
+
+function childToProfile(child: (typeof CHILDREN)[number]): ChildProfile {
+  return {
+    id: child.id,
+    name: child.name,
+    age: child.age,
+    emoji: child.emoji,
+    primaryColor: child.primaryColor,
+    secondaryColor: child.secondaryColor,
+    achievedLevelIds: child.levels.filter((l) => l.alreadyAchieved).map((l) => l.id),
+  }
+}
 
 /**
  * Transparenter Wrapper: nutzt Firestore wenn eingeloggt, sonst localStorage.
@@ -28,14 +41,16 @@ export function useSyncedChildren() {
       const snapshot = await getDocs(collection(db, 'users', user!.uid, 'children'))
       if (!snapshot.empty) return
 
-      // Lokale Profile laden
+      // Lokale Profile aus localStorage laden
       const rawProfiles = localStorage.getItem(PROFILES_KEY)
-      if (!rawProfiles) return
-      let profiles: ChildProfile[]
-      try {
-        profiles = JSON.parse(rawProfiles)
-      } catch {
-        return
+      let profiles: ChildProfile[] | null = null
+      if (rawProfiles) {
+        try { profiles = JSON.parse(rawProfiles) } catch { /* ignore */ }
+      }
+
+      // Fallback: Standardprofile aus dem Code nehmen
+      if (!profiles || profiles.length === 0) {
+        profiles = CHILDREN.map(childToProfile)
       }
 
       // Profile + Fortschritt nach Firestore schreiben
@@ -47,9 +62,7 @@ export function useSyncedChildren() {
           try {
             const progress = JSON.parse(rawProgress)
             await setDoc(doc(db, 'users', user!.uid, 'progress', profile.id), progress)
-          } catch {
-            // Fortschritt-Migration fehlgeschlagen – ignorieren
-          }
+          } catch { /* Fortschritt-Migration fehlgeschlagen */ }
         }
       }
 
