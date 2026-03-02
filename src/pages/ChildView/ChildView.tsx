@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useChildren } from '../../hooks/useChildren'
-import { useProgress } from '../../hooks/useProgress'
+import { useSyncedChildren } from '../../hooks/useSyncedChildren'
+import { useSyncedProgress } from '../../hooks/useSyncedProgress'
 import AwardLevelCard from '../../components/AwardLevelCard/AwardLevelCard'
 import Mascot from '../../components/Mascot/Mascot'
 import styles from './ChildView.module.css'
@@ -9,13 +9,13 @@ import styles from './ChildView.module.css'
 export default function ChildView() {
   const { childId } = useParams<{ childId: string }>()
   const navigate = useNavigate()
-  const { getChildById } = useChildren()
+  const { getChildById } = useSyncedChildren()
 
   const child = getChildById(childId ?? '')
 
   // Hooks müssen vor dem Early-Return stehen (Rules of Hooks)
   const { isBadgeAchieved, getBadgeDate, getLevelDate, setLevelDate, achieveBadge, unachieveBadge } =
-    useProgress(child?.id ?? '__none__')
+    useSyncedProgress(child?.id ?? '__none__')
 
   const [celebrating, setCelebrating] = useState(false)
   const celebrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)

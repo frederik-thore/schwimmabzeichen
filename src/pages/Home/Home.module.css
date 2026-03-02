@@ -4,6 +4,12 @@
   background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 60%);
 }
 
+.syncBanner {
+  padding: 0 20px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
 .header {
   text-align: center;
   padding: 48px 24px 32px;

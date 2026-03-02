@@ -114,7 +114,111 @@ Die App ist eine reine **Static Site** (HTML + JS + CSS, kein Backend) – perfe
 
 ---
 
-## 🛠️ Technologiestack
+## � Geräteübergreifende Synchronisation
+
+Aktuell werden alle Daten nur im `localStorage` des jeweiligen Browsers gespeichert. Um denselben Fortschritt auf Smartphone, Tablet und Computer zu sehen (z. B. Papa trägt am Beckenrand auf dem Handy einen Badge ein – Mama sieht es sofort auf dem iPad), wird eine Cloud-Synchronisation benötigt.
+
+### Empfehlung: Firebase Firestore + Google Sign-In
+
+**Warum Firebase?**
+- **Kein eigener Server** nötig – Firebase ist ein pures Client-SDK, keine Backend-Programmierung
+- **Völlig kostenlos** (Spark Plan): 50.000 Lesezugriffe/Tag, 20.000 Schreibzugriffe/Tag, 1 GiB Speicher – für eine Familien-App mehr als ausreichend
+- **Echtzeit-Sync**: Änderungen auf einem Gerät sind sofort auf allen anderen Geräten sichtbar
+- **Offline-fähig**: Das Firestore-SDK hat einen eingebauten Offline-Cache; die App funktioniert auch ohne Internet und synchronisiert automatisch, sobald wieder Verbindung besteht
+- **Datenschutz**: Alle Daten liegen ausschließlich unter dem Google-Account der Familie, niemand sonst hat Zugriff
+- **Einfache Authorisierung**: Ein gemeinsamer Familien-Google-Account (oder ein existierender) – kein neues Passwort, kein neuer Service
+
+### Datenmodell in Firestore
+
+```
+/users/{uid}/
+├── children/
+│   └── {childId}         # ChildProfile: { name, age, emoji, alreadyAchieved }
+└── progress/
+    └── {childId}         # { [badgeId]: ISO-Timestamp, __level__seepferdchen: "2025-03", ... }
+```
+
+`uid` ist die eindeutige User-ID des eingeloggten Google-Accounts. Alle Geräte, die sich mit demselben Google-Account anmelden, lesen und schreiben dieselben Daten.
+
+### Migrations-Strategie (localStorage → Firestore)
+
+Beim ersten Login prüft die App, ob lokale Daten vorhanden sind. Falls ja, werden diese einmalig nach Firestore hochgeladen und danach nur noch Firestore als Quelle verwendet.
+
+### UX-Konzept
+
+- Ein kleines **„☁️ Synchronisation aktivieren"**-Banner auf der Startseite
+- Klick öffnet **Google Sign-In Popup** (ein Klick, kein Formular)
+- Nach dem Login: Banner zeigt den Account-Namen + **„Abmelden"**-Link
+- Alle Datenschreiboperationen laufen danach transparent gegen Firestore statt localStorage
+- Kein erzwungener Login – die App funktioniert auch weiterhin ohne Anmeldung (rein lokal)
+
+---
+
+## 📋 Implementierungsschritte: Cloud-Sync
+
+### Phase 1 – Firebase-Projekt einrichten (einmalig, manuell)
+1. Unter [console.firebase.google.com](https://console.firebase.google.com) ein neues Projekt anlegen (`schwimmabzeichen`)
+2. **Firestore Database** aktivieren (Produktionsmodus mit Security Rules)
+3. **Authentication → Google** als Sign-In-Methode aktivieren
+4. In den Projekteinstellungen → „Web-App hinzufügen" → Firebase-Config-Objekt kopieren
+5. Firestore Security Rules setzen (nur eingeloggter User darf seine eigenen Daten lesen/schreiben):
+   ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /users/{userId}/{document=**} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+     }
+   }
+   ```
+
+### Phase 2 – SDK & Konfiguration
+6. Firebase SDK installieren: `npm install firebase`
+7. `.env`-Datei anlegen mit den Firebase-Config-Werten (Prefix `VITE_`):
+   ```
+   VITE_FIREBASE_API_KEY=...
+   VITE_FIREBASE_AUTH_DOMAIN=...
+   VITE_FIREBASE_PROJECT_ID=...
+   VITE_FIREBASE_APP_ID=...
+   ```
+8. `.env` zu `.gitignore` hinzufügen – die Werte als **GitHub Secrets** hinterlegen, damit GitHub Actions den Build mit den richtigen Werten erstellt
+9. `src/lib/firebase.ts` anlegen – initialisiert Firebase App, Auth und Firestore
+
+### Phase 3 – Auth-Hook
+10. `src/hooks/useAuth.ts` implementieren:
+    - Hält den aktuellen `User | null`-State via `onAuthStateChanged`
+    - Exportiert `signInWithGoogle()` und `signOut()` Funktionen
+
+### Phase 4 – Firestore-Hooks
+11. `src/hooks/useFirestoreChildren.ts` implementieren:
+    - Liest Kinderprofile aus `users/{uid}/children` via `onSnapshot` (Echtzeit)
+    - Exportiert dieselbe API wie `useChildren` (`addChild`, `updateChild`, `deleteChild`)
+12. `src/hooks/useFirestoreProgress.ts` implementieren:
+    - Liest/schreibt Fortschritt aus `users/{uid}/progress/{childId}`
+    - Exportiert dieselbe API wie `useProgress`
+
+### Phase 5 – Migration & Datenbündelung
+13. `src/hooks/useSyncedChildren.ts` – Wrapper der abhängig vom Auth-State entweder `useFirestoreChildren` oder `useChildren` (localStorage) zurückgibt
+14. `src/hooks/useSyncedProgress.ts` – Wrapper analog für Progress
+15. Alle Aufrufer (`Home.tsx`, `ChildView.tsx`) auf die neuen `useSynced*`-Hooks umstellen
+
+### Phase 6 – Migrations-Logik
+16. Nach dem ersten erfolgreichen Login: lokale Daten aus localStorage lesen und in Firestore schreiben (einmalig), danach localStorage-Einträge löschen
+
+### Phase 7 – UI
+17. `src/components/SyncBanner/SyncBanner.tsx` anlegen – zeigt Sync-Status und Login/Logout-Button
+18. Banner in `Home.tsx` einbinden
+19. Ladeindikator während Firestore-Daten initial geladen werden
+
+### Phase 8 – Deployment
+20. Firebase-Config-Werte als **GitHub Repository Secrets** hinterlegen
+21. `deploy.yml` erweitern: `env`-Block mit `VITE_FIREBASE_*`-Variablen aus Secrets
+22. Build testen und deployen
+
+---
+
+
 
 | Bereich | Technologie | Begründung |
 |---------|-------------|------------|

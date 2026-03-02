@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useChildren } from '../../hooks/useChildren'
-import { useProgress } from '../../hooks/useProgress'
+import { useSyncedChildren } from '../../hooks/useSyncedChildren'
+import { useSyncedProgress } from '../../hooks/useSyncedProgress'
 import { Child, ChildProfile } from '../../types'
 import Mascot from '../../components/Mascot/Mascot'
 import ChildFormModal from '../../components/ChildFormModal/ChildFormModal'
+import SyncBanner from '../../components/SyncBanner/SyncBanner'
 import styles from './Home.module.css'
 
 function ChildCard({
@@ -17,7 +18,7 @@ function ChildCard({
   onDelete: () => void
 }) {
   const navigate = useNavigate()
-  const { isBadgeAchieved } = useProgress(child.id)
+  const { isBadgeAchieved } = useSyncedProgress(child.id)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const earnableBadges = child.levels
@@ -113,7 +114,7 @@ function ChildCard({
 }
 
 export default function Home() {
-  const { children, addChild, updateChild, deleteChild } = useChildren()
+  const { children, addChild, updateChild, deleteChild } = useSyncedChildren()
   const [modalMode, setModalMode] = useState<'add' | { profile: ChildProfile } | null>(null)
 
   const handleSave = (profile: ChildProfile) => {
@@ -132,6 +133,10 @@ export default function Home() {
         <Mascot size={64} className={styles.mascot} />
         <h1 className={styles.title}>Schwimm-Tracker</h1>
         <p className={styles.subtitle}>Wer möchte heute trainieren?</p>
+      </div>
+
+      <div className={styles.syncBanner}>
+        <SyncBanner />
       </div>
 
       <div className={styles.childGrid}>
